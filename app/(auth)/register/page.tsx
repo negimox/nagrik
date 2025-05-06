@@ -1,34 +1,34 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function LoginPage() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
-  const [userType, setUserType] = useState("citizen")
+export default function RegisterPage() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [userType, setUserType] = useState("citizen");
 
   const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     // Simulate login process
     setTimeout(() => {
-      setIsLoading(false)
+      setIsLoading(false);
       if (userType === "citizen") {
-        router.push("/citizen/dashboard")
+        router.push("/citizen/dashboard");
       } else {
-        router.push("/authority/dashboard")
+        router.push("/authority/dashboard");
       }
-    }, 1500)
-  }
+    }, 1500);
+  };
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
@@ -63,9 +63,15 @@ export default function LoginPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-md mx-auto">
           <div className="bg-white p-6 border rounded-md shadow-sm">
-            <h1 className="text-xl font-bold text-[#003A70] mb-6 pb-2 border-b-2 border-[#003A70]">System Login</h1>
+            <h1 className="text-xl font-bold text-[#003A70] mb-6 pb-2 border-b-2 border-[#003A70]">
+              System Register
+            </h1>
 
-            <Tabs defaultValue="citizen" className="w-full" onValueChange={setUserType}>
+            <Tabs
+              defaultValue="citizen"
+              className="w-full"
+              onValueChange={setUserType}
+            >
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger
                   value="citizen"
@@ -100,23 +106,38 @@ export default function LoginPage() {
                       <Label htmlFor="password" className="text-sm font-bold">
                         Password
                       </Label>
-                      <Link href="/auth/reset-password" className="text-xs text-[#003A70] hover:underline">
+                      <Link
+                        href="/auth/reset-password"
+                        className="text-xs text-[#003A70] hover:underline"
+                      >
                         Forgot password?
                       </Link>
                     </div>
-                    <Input id="password" type="password" required className="border-gray-300" />
+                    <Input
+                      id="password"
+                      type="password"
+                      required
+                      className="border-gray-300"
+                    />
                   </div>
 
                   <div className="pt-2">
-                    <Button type="submit" className="w-full bg-[#003A70] hover:bg-[#004d94]" disabled={isLoading}>
+                    <Button
+                      type="submit"
+                      className="w-full bg-[#003A70] hover:bg-[#004d94]"
+                      disabled={isLoading}
+                    >
                       {isLoading ? "Logging in..." : "Login"}
                     </Button>
                   </div>
 
                   <div className="text-center text-sm pt-4 border-t">
-                    Don't have an account?{" "}
-                    <Link href="/auth/register" className="text-[#003A70] hover:underline">
-                      Register
+                    Have an account?{" "}
+                    <Link
+                      href="/login"
+                      className="text-[#003A70] hover:underline"
+                    >
+                      Login
                     </Link>
                   </div>
                 </form>
@@ -138,25 +159,43 @@ export default function LoginPage() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="auth-password" className="text-sm font-bold">
+                      <Label
+                        htmlFor="auth-password"
+                        className="text-sm font-bold"
+                      >
                         Password
                       </Label>
-                      <Link href="/auth/reset-password" className="text-xs text-[#003A70] hover:underline">
+                      <Link
+                        href="/auth/reset-password"
+                        className="text-xs text-[#003A70] hover:underline"
+                      >
                         Forgot password?
                       </Link>
                     </div>
-                    <Input id="auth-password" type="password" required className="border-gray-300" />
+                    <Input
+                      id="auth-password"
+                      type="password"
+                      required
+                      className="border-gray-300"
+                    />
                   </div>
 
                   <div className="pt-2">
-                    <Button type="submit" className="w-full bg-[#003A70] hover:bg-[#004d94]" disabled={isLoading}>
+                    <Button
+                      type="submit"
+                      className="w-full bg-[#003A70] hover:bg-[#004d94]"
+                      disabled={isLoading}
+                    >
                       {isLoading ? "Logging in..." : "Login"}
                     </Button>
                   </div>
 
                   <div className="text-center text-sm pt-4 border-t">
                     Need access?{" "}
-                    <Link href="/auth/request-access" className="text-[#003A70] hover:underline">
+                    <Link
+                      href="/auth/request-access"
+                      className="text-[#003A70] hover:underline"
+                    >
                       Request Access
                     </Link>
                   </div>
@@ -169,7 +208,10 @@ export default function LoginPage() {
             <h2 className="text-sm font-bold mb-2">Important Notes</h2>
             <ul className="text-xs space-y-1 text-gray-700">
               <li>• Please do not use the browser's back button.</li>
-              <li>• For security reasons, you will be automatically logged out after a period of inactivity.</li>
+              <li>
+                • For security reasons, you will be automatically logged out
+                after a period of inactivity.
+              </li>
               <li>• We recommend changing your password regularly.</li>
               <li>• Always log out when using public computers.</li>
             </ul>
@@ -180,7 +222,10 @@ export default function LoginPage() {
       {/* Footer */}
       <footer className="bg-[#003A70] text-white py-4 mt-8">
         <div className="container mx-auto px-4 text-center text-xs">
-          <p>© {new Date().getFullYear()} City Government - Infrastructure Monitoring System. All Rights Reserved.</p>
+          <p>
+            © {new Date().getFullYear()} City Government - Infrastructure
+            Monitoring System. All Rights Reserved.
+          </p>
           <div className="mt-2 flex justify-center gap-4">
             <Link href="/terms" className="hover:underline">
               Terms of Use
@@ -195,5 +240,5 @@ export default function LoginPage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }
