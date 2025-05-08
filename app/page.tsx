@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Header with government emblem */}
-      <Header />
+      <Header showLogin={true} />
 
       {/* Secondary navigation */}
       <div className="bg-[#F0F0F0] border-b">

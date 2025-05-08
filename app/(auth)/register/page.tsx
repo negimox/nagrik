@@ -2,18 +2,221 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import Cookies from "js-cookie";
+import { StateSelect, CitySelect } from "react-country-state-city";
+import "react-country-state-city/dist/react-country-state-city.css";
+
+import Header from "@/components/layout/header";
+import { z } from "zod";
+import { auth } from "@/lib/firebase";
+import { useUser } from "@/contexts/UserContext";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [userType, setUserType] = useState("citizen");
+  const [userType, setUserType] = useState<"citizen" | "authority">("citizen");
+  const { setUser } = useUser();
+
+  // State and City selection for India - using react-country-state-city
+  const [selectedState, setSelectedState] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
+
+  //   Form
+  const handleUserTypeChange = (value: string) => {
+    if (value === "citizen" || value === "authority") {
+      setUserType(value);
+    }
+  };
+
+  const formSchema = z.object({
+    username: z.string().min(2).max(50),
+    email: z.string().email(),
+    password: z.string().min(8).max(50),
+  });
+
+  const authorityFormSchema = z.object({
+    username: z.string().min(2).max(50),
+    email: z.string().email(),
+    password: z.string().min(8).max(50),
+    proofid: z.string().min(12).max(12),
+    state: z.string().optional(),
+    city: z.string().optional(),
+  });
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
+  const authorityForm = useForm<z.infer<typeof authorityFormSchema>>({
+    resolver: zodResolver(authorityFormSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      proofid: "",
+      state: "",
+      city: "",
+    },
+  });
+
+  // Citizen registration submission
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+    setIsLoading(true);
+    createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        // Signed up
+        const user = userCredential.user;
+        console.log(user);
+
+        // Include username and userType in the user object
+        const userData = {
+          ...user,
+          username: values.username,
+          userType: userType,
+        };
+
+        // Get token for middleware auth
+        return user.getIdToken().then((token) => {
+          // Store user token in cookie for middleware auth check
+          Cookies.set("authToken", token, { expires: 7 });
+          Cookies.set("userType", userType, { expires: 7 });
+          localStorage.setItem("userType", userType);
+
+          // Set user in context
+          setUser({
+            ...user,
+            username: values.username,
+            userType: userType,
+          });
+
+          // Call our API endpoint to store the user in MongoDB
+          return fetch("/api/auth/signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData),
+          });
+        });
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("User saved to database:", data);
+        // Redirect to the appropriate dashboard based on user type
+        if (userType === "citizen") {
+          router.push("/citizen/dashboard");
+        } else {
+          router.push("/authority/dashboard");
+        }
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error("Registration error:", errorCode, errorMessage);
+        // Show error to user - would be better with toast notification
+        alert(`Registration failed: ${errorMessage}`);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
+  // Authority registration handler
+  function onAuthoritySubmit(values: z.infer<typeof authorityFormSchema>) {
+    console.log(values);
+    setIsLoading(true);
+
+    createUserWithEmailAndPassword(auth, values.email, values.password)
+      .then((userCredential) => {
+        // Signed up
+        const user = userCredential.user;
+        console.log(user);
+
+        // Include username, identification ID, location data and userType in the user object
+        const authorityData = {
+          ...user,
+          username: values.username,
+          identificationId: values.proofid,
+          userType: "authority",
+          state: values.state, // State name is already stored in values.state
+          city: values.city, // City name is already stored in values.city
+          country: "India", // Hardcoded as we're only supporting India
+        };
+
+        // Get token for middleware auth
+        return user.getIdToken().then((token) => {
+          // Store user token in cookie for middleware auth check
+          Cookies.set("authToken", token, { expires: 7 });
+          Cookies.set("userType", "authority", { expires: 7 });
+          localStorage.setItem("userType", "authority");
+
+          // Set user in context
+          setUser({
+            ...user,
+            username: values.username,
+            userType: "authority",
+            state: values.state,
+            city: values.city,
+          });
+
+          // Call our API endpoint to store the authority in MongoDB
+          return fetch("/api/auth/authority-signup", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(authorityData),
+          });
+        });
+      })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Authority user saved to database:", data);
+        alert(
+          "Authority registration submitted. Your account is pending approval."
+        );
+        // Redirect to a waiting page or home
+        router.push("/");
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error("Authority registration error:", errorCode, errorMessage);
+        // Show error to user - would be better with toast notification
+        alert(`Registration failed: ${errorMessage}`);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,21 +236,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
       {/* Header */}
-      <header className="bg-[#003A70] text-white">
-        <div className="container mx-auto px-4 py-3 flex items-center">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center">
-              <div className="h-8 w-8 bg-[#003A70] rounded-full flex items-center justify-center text-white font-bold text-xs">
-                CITY
-              </div>
-            </div>
-            <div>
-              <div className="text-xs">City Government</div>
-              <div className="font-bold">Infrastructure Monitoring System</div>
-            </div>
-          </Link>
-        </div>
-      </header>
+      <Header showLogin={false} />
 
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-2">
@@ -56,7 +245,7 @@ export default function RegisterPage() {
             Home
           </Link>
           <span>{">"}</span>
-          <span className="text-gray-600">Login</span>
+          <span className="text-gray-600">Sign Up</span>
         </div>
       </div>
 
@@ -70,7 +259,7 @@ export default function RegisterPage() {
             <Tabs
               defaultValue="citizen"
               className="w-full"
-              onValueChange={setUserType}
+              onValueChange={handleUserTypeChange}
             >
               <TabsList className="grid w-full grid-cols-2 mb-6">
                 <TabsTrigger
@@ -88,118 +277,214 @@ export default function RegisterPage() {
               </TabsList>
 
               <TabsContent value="citizen">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-sm font-bold">
-                      Email Address
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="example@email.com"
-                      required
-                      className="border-gray-300"
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-8"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Full Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Jhon Doe" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="password" className="text-sm font-bold">
-                        Password
-                      </Label>
-                      <Link
-                        href="/auth/reset-password"
-                        className="text-xs text-[#003A70] hover:underline"
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="example@gmail.com" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="pt-2">
+                      <Button
+                        type="submit"
+                        className="w-full bg-[#003A70] hover:bg-[#004d94]"
+                        disabled={isLoading}
                       >
-                        Forgot password?
+                        {isLoading ? "Signing up..." : "Sign Up"}
+                      </Button>
+                    </div>
+
+                    <div className="text-center text-sm pt-4 border-t">
+                      Have an account?{" "}
+                      <Link
+                        href="/login"
+                        className="text-[#003A70] hover:underline"
+                      >
+                        Login
                       </Link>
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      required
-                      className="border-gray-300"
-                    />
-                  </div>
-
-                  <div className="pt-2">
-                    <Button
-                      type="submit"
-                      className="w-full bg-[#003A70] hover:bg-[#004d94]"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Logging in..." : "Login"}
-                    </Button>
-                  </div>
-
-                  <div className="text-center text-sm pt-4 border-t">
-                    Have an account?{" "}
-                    <Link
-                      href="/login"
-                      className="text-[#003A70] hover:underline"
-                    >
-                      Login
-                    </Link>
-                  </div>
-                </form>
+                  </form>
+                </Form>
               </TabsContent>
 
               <TabsContent value="authority">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="auth-email" className="text-sm font-bold">
-                      Staff ID
-                    </Label>
-                    <Input
-                      id="auth-email"
-                      type="text"
-                      placeholder="Example: 12345678"
-                      required
-                      className="border-gray-300"
+                <Form {...authorityForm}>
+                  <form
+                    onSubmit={authorityForm.handleSubmit(onAuthoritySubmit)}
+                    className="space-y-8"
+                  >
+                    <FormField
+                      control={authorityForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Full Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Jhon Doe" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </div>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <Label
-                        htmlFor="auth-password"
-                        className="text-sm font-bold"
+                    <FormField
+                      control={authorityForm.control}
+                      name="proofid"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Identification ID</FormLabel>
+                          <FormControl>
+                            <Input placeholder="1234 5678 9012" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={authorityForm.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input placeholder="example@gmail.com" {...field} />
+                          </FormControl>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={authorityForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* State Selection for India */}
+                    <FormField
+                      control={authorityForm.control}
+                      name="state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>State</FormLabel>
+                          <FormControl>
+                            <div className="w-full">
+                              <StateSelect
+                                countryid={101} // Country ID for India
+                                onChange={(state) => {
+                                  field.onChange(state?.name || "");
+                                  setSelectedState(state);
+                                  // Reset city when state changes
+                                  authorityForm.setValue("city", "");
+                                }}
+                                placeHolder="Select State"
+                                containerClassName="w-full"
+                                inputClassName="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* City Selection for India */}
+                    <FormField
+                      control={authorityForm.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>City</FormLabel>
+                          <FormControl>
+                            <div className="w-full">
+                              <CitySelect
+                                countryid={101} // Country ID for India
+                                stateid={selectedState?.id}
+                                onChange={(city) => {
+                                  field.onChange(city?.name || "");
+                                  setSelectedCity(city);
+                                }}
+                                placeHolder="Select City"
+                                containerClassName="w-full"
+                                inputClassName="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                disabled={!selectedState}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <div className="pt-2">
+                      <Button
+                        type="submit"
+                        className="w-full bg-[#003A70] hover:bg-[#004d94]"
+                        disabled={isLoading}
                       >
-                        Password
-                      </Label>
+                        {isLoading ? "Signing up..." : "Sign Up"}
+                      </Button>
+                    </div>
+
+                    <div className="text-center text-sm pt-4 border-t">
+                      Have an account?{" "}
                       <Link
-                        href="/auth/reset-password"
-                        className="text-xs text-[#003A70] hover:underline"
+                        href="/login"
+                        className="text-[#003A70] hover:underline"
                       >
-                        Forgot password?
+                        Login
                       </Link>
                     </div>
-                    <Input
-                      id="auth-password"
-                      type="password"
-                      required
-                      className="border-gray-300"
-                    />
-                  </div>
-
-                  <div className="pt-2">
-                    <Button
-                      type="submit"
-                      className="w-full bg-[#003A70] hover:bg-[#004d94]"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Logging in..." : "Login"}
-                    </Button>
-                  </div>
-
-                  <div className="text-center text-sm pt-4 border-t">
-                    Need access?{" "}
-                    <Link
-                      href="/auth/request-access"
-                      className="text-[#003A70] hover:underline"
-                    >
-                      Request Access
-                    </Link>
-                  </div>
-                </form>
+                  </form>
+                </Form>
               </TabsContent>
             </Tabs>
           </div>

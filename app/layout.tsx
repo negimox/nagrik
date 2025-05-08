@@ -1,8 +1,10 @@
 import type React from "react";
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
+import { GeistSans } from "geist/font";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import { UserProvider } from "@/contexts/UserContext";
 
 const notoSans = Noto_Sans({ subsets: ["latin"] });
 
@@ -18,14 +20,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={notoSans.className}>
+      <body className={GeistSans.className}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <UserProvider>{children}</UserProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -1,8 +1,8 @@
-import type { ReactNode } from "react"
-import Link from "next/link"
-import { Bell, User, LogOut, Settings } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { Bell, User, LogOut, Settings } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,67 +10,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
+import Header from "@/components/layout/header";
 
 export default function AuthorityLayout({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col bg-[#F0F0F0]">
       {/* Header */}
-      <header className="bg-[#003A70] text-white">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-white rounded-full flex items-center justify-center">
-              <div className="h-8 w-8 bg-[#003A70] rounded-full flex items-center justify-center text-white font-bold text-xs">
-                CITY
-              </div>
-            </div>
-            <div>
-              <div className="text-xs">City Government</div>
-              <div className="font-bold">Infrastructure Monitoring System</div>
-            </div>
-          </Link>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" className="text-white">
-              <Bell className="h-5 w-5" />
-              <span className="sr-only">Notifications</span>
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative flex items-center gap-2 text-white">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="Admin" />
-                    <AvatarFallback>AD</AvatarFallback>
-                  </Avatar>
-                  <span className="hidden md:inline-block">Admin User</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/authority/profile">
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/authority/settings">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/auth/login">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-      </header>
+      <Header showLogout={true} />
 
       {/* Navigation */}
       <div className="bg-white border-b">
@@ -123,7 +70,10 @@ export default function AuthorityLayout({ children }: { children: ReactNode }) {
             Home
           </Link>
           <span>{">"}</span>
-          <Link href="/authority/dashboard" className="text-[#003A70] hover:underline">
+          <Link
+            href="/authority/dashboard"
+            className="text-[#003A70] hover:underline"
+          >
             Authority Portal
           </Link>
           <span>{">"}</span>
@@ -139,7 +89,8 @@ export default function AuthorityLayout({ children }: { children: ReactNode }) {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-xs">
-              © {new Date().getFullYear()} City Government - Infrastructure Monitoring System. All Rights Reserved.
+              © {new Date().getFullYear()} City Government - Infrastructure
+              Monitoring System. All Rights Reserved.
             </div>
             <div className="flex gap-4 text-xs">
               <Link href="/terms" className="hover:underline">
@@ -159,5 +110,5 @@ export default function AuthorityLayout({ children }: { children: ReactNode }) {
         </div>
       </footer>
     </div>
-  )
+  );
 }

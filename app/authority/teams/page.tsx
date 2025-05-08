@@ -1,33 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Filter, MoreHorizontal, Plus, Search, Users } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { Filter, MoreHorizontal, Plus, Search, Users } from "lucide-react";
 
 export default function TeamsPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState("all")
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
 
   // Mock data for teams
   const teams = [
     {
       id: "team-001",
-      name: "Road Maintenance Team",
+      name: "Road Maintenance Department",
       department: "Public Works",
       members: 8,
       activeReports: 12,
@@ -42,7 +49,7 @@ export default function TeamsPage() {
     },
     {
       id: "team-002",
-      name: "Electrical Team",
+      name: "Public Works Department",
       department: "Utilities",
       members: 6,
       activeReports: 5,
@@ -57,7 +64,7 @@ export default function TeamsPage() {
     },
     {
       id: "team-003",
-      name: "Sanitation Team",
+      name: "Urban Development Department",
       department: "Public Health",
       members: 12,
       activeReports: 8,
@@ -72,7 +79,7 @@ export default function TeamsPage() {
     },
     {
       id: "team-004",
-      name: "Water Management Team",
+      name: "Water Management Department",
       department: "Utilities",
       members: 7,
       activeReports: 9,
@@ -87,7 +94,7 @@ export default function TeamsPage() {
     },
     {
       id: "team-005",
-      name: "Parks & Recreation Team",
+      name: "Parks & Recreation Department",
       department: "Parks",
       members: 9,
       activeReports: 7,
@@ -102,7 +109,7 @@ export default function TeamsPage() {
     },
     {
       id: "team-006",
-      name: "Traffic Management Team",
+      name: "Traffic Management Department",
       department: "Transportation",
       members: 5,
       activeReports: 11,
@@ -117,7 +124,7 @@ export default function TeamsPage() {
     },
     {
       id: "team-007",
-      name: "Building Inspection Team",
+      name: "Building Inspection Department",
       department: "Public Works",
       members: 4,
       activeReports: 6,
@@ -132,7 +139,7 @@ export default function TeamsPage() {
     },
     {
       id: "team-008",
-      name: "Emergency Response Team",
+      name: "Emergency Response Department",
       department: "Public Safety",
       members: 15,
       activeReports: 3,
@@ -145,33 +152,36 @@ export default function TeamsPage() {
       },
       category: "emergency",
     },
-  ]
+  ];
 
   // Filter teams based on search query and active tab
   const filteredTeams = teams.filter((team) => {
     const matchesSearch =
       team.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       team.department.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      team.lead.name.toLowerCase().includes(searchQuery.toLowerCase())
+      team.lead.name.toLowerCase().includes(searchQuery.toLowerCase());
 
-    if (activeTab === "all") return matchesSearch
-    return matchesSearch && team.category === activeTab
-  })
+    if (activeTab === "all") return matchesSearch;
+    return matchesSearch && team.category === activeTab;
+  });
 
   // Helper function to get performance color
   const getPerformanceColor = (performance: number) => {
-    if (performance >= 90) return "bg-green-500"
-    if (performance >= 75) return "bg-blue-500"
-    if (performance >= 60) return "bg-yellow-500"
-    return "bg-red-500"
-  }
+    if (performance >= 90) return "bg-green-500";
+    if (performance >= 75) return "bg-blue-500";
+    if (performance >= 60) return "bg-yellow-500";
+    return "bg-red-500";
+  };
 
   return (
     <div className="space-y-6">
       <div className="bg-white border rounded-md p-6">
-        <h1 className="text-xl font-bold text-[#003A70] mb-4">Teams Management</h1>
+        <h1 className="text-xl font-bold text-[#003A70] mb-4">
+          Teams Management
+        </h1>
         <p className="text-sm text-gray-600">
-          Manage and monitor all teams responsible for infrastructure maintenance and issue resolution.
+          Manage and monitor all teams responsible for infrastructure
+          maintenance and issue resolution.
         </p>
       </div>
 
@@ -188,7 +198,11 @@ export default function TeamsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <Button variant="outline" size="icon" className="border-[#003A70] text-[#003A70]">
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-[#003A70] text-[#003A70]"
+            >
               <Filter className="h-4 w-4" />
               <span className="sr-only">Filter</span>
             </Button>
@@ -201,7 +215,11 @@ export default function TeamsPage() {
           </div>
         </div>
 
-        <Tabs defaultValue="all" className="w-full" onValueChange={setActiveTab}>
+        <Tabs
+          defaultValue="all"
+          className="w-full"
+          onValueChange={setActiveTab}
+        >
           <TabsList className="w-full justify-start p-0 bg-transparent h-auto border-b mb-4">
             <TabsTrigger
               value="all"
@@ -240,13 +258,27 @@ export default function TeamsPage() {
               <Table>
                 <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableHead className="font-medium text-gray-500">Team Name</TableHead>
-                    <TableHead className="font-medium text-gray-500">Department</TableHead>
-                    <TableHead className="font-medium text-gray-500">Team Lead</TableHead>
-                    <TableHead className="font-medium text-gray-500">Members</TableHead>
-                    <TableHead className="font-medium text-gray-500">Active Reports</TableHead>
-                    <TableHead className="font-medium text-gray-500">Performance</TableHead>
-                    <TableHead className="text-right font-medium text-gray-500">Actions</TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Name
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Department
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Lead
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Members
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Active Reports
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Performance
+                    </TableHead>
+                    <TableHead className="text-right font-medium text-gray-500">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -257,7 +289,10 @@ export default function TeamsPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={team.lead.avatar || "/placeholder.svg"} alt={team.lead.name} />
+                            <AvatarImage
+                              src={team.lead.avatar || "/placeholder.svg"}
+                              alt={team.lead.name}
+                            />
                             <AvatarFallback className="bg-[#003A70] text-white">
                               {team.lead.name
                                 .split(" ")
@@ -266,8 +301,12 @@ export default function TeamsPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{team.lead.name}</div>
-                            <div className="text-xs text-gray-500">{team.lead.position}</div>
+                            <div className="font-medium text-sm">
+                              {team.lead.name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {team.lead.position}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -278,7 +317,10 @@ export default function TeamsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-100 text-blue-800 border-blue-300"
+                        >
                           {team.activeReports}
                         </Badge>
                       </TableCell>
@@ -286,28 +328,39 @@ export default function TeamsPage() {
                         <div className="flex items-center gap-2">
                           <Progress
                             value={team.performance}
-                            className="h-2 w-24"
-                            indicatorClassName={getPerformanceColor(team.performance)}
+                            className={`h-2 w-24 [&>div]:${getPerformanceColor(
+                              team.performance
+                            )}`}
                           />
-                          <span className="text-sm font-medium">{team.performance}%</span>
+                          <span className="text-sm font-medium">
+                            {team.performance}%
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/authority/teams/${team.id}`}>View Details</Link>
+                              <Link href={`/authority/teams/${team.id}`}>
+                                View Details
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>Edit Team</DropdownMenuItem>
                             <DropdownMenuItem>Manage Members</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View Assigned Reports</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              View Assigned Reports
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -325,13 +378,27 @@ export default function TeamsPage() {
               <Table>
                 <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableHead className="font-medium text-gray-500">Team Name</TableHead>
-                    <TableHead className="font-medium text-gray-500">Department</TableHead>
-                    <TableHead className="font-medium text-gray-500">Team Lead</TableHead>
-                    <TableHead className="font-medium text-gray-500">Members</TableHead>
-                    <TableHead className="font-medium text-gray-500">Active Reports</TableHead>
-                    <TableHead className="font-medium text-gray-500">Performance</TableHead>
-                    <TableHead className="text-right font-medium text-gray-500">Actions</TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Name
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Department
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Lead
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Members
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Active Reports
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Performance
+                    </TableHead>
+                    <TableHead className="text-right font-medium text-gray-500">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -342,7 +409,10 @@ export default function TeamsPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={team.lead.avatar || "/placeholder.svg"} alt={team.lead.name} />
+                            <AvatarImage
+                              src={team.lead.avatar || "/placeholder.svg"}
+                              alt={team.lead.name}
+                            />
                             <AvatarFallback className="bg-[#003A70] text-white">
                               {team.lead.name
                                 .split(" ")
@@ -351,8 +421,12 @@ export default function TeamsPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{team.lead.name}</div>
-                            <div className="text-xs text-gray-500">{team.lead.position}</div>
+                            <div className="font-medium text-sm">
+                              {team.lead.name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {team.lead.position}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -363,7 +437,10 @@ export default function TeamsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-100 text-blue-800 border-blue-300"
+                        >
                           {team.activeReports}
                         </Badge>
                       </TableCell>
@@ -371,28 +448,39 @@ export default function TeamsPage() {
                         <div className="flex items-center gap-2">
                           <Progress
                             value={team.performance}
-                            className="h-2 w-24"
-                            indicatorClassName={getPerformanceColor(team.performance)}
+                            className={`h-2 w-24 [&>div]:${getPerformanceColor(
+                              team.performance
+                            )}`}
                           />
-                          <span className="text-sm font-medium">{team.performance}%</span>
+                          <span className="text-sm font-medium">
+                            {team.performance}%
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/authority/teams/${team.id}`}>View Details</Link>
+                              <Link href={`/authority/teams/${team.id}`}>
+                                View Details
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>Edit Team</DropdownMenuItem>
                             <DropdownMenuItem>Manage Members</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View Assigned Reports</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              View Assigned Reports
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -410,13 +498,27 @@ export default function TeamsPage() {
               <Table>
                 <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableHead className="font-medium text-gray-500">Team Name</TableHead>
-                    <TableHead className="font-medium text-gray-500">Department</TableHead>
-                    <TableHead className="font-medium text-gray-500">Team Lead</TableHead>
-                    <TableHead className="font-medium text-gray-500">Members</TableHead>
-                    <TableHead className="font-medium text-gray-500">Active Reports</TableHead>
-                    <TableHead className="font-medium text-gray-500">Performance</TableHead>
-                    <TableHead className="text-right font-medium text-gray-500">Actions</TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Name
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Department
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Lead
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Members
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Active Reports
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Performance
+                    </TableHead>
+                    <TableHead className="text-right font-medium text-gray-500">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -427,7 +529,10 @@ export default function TeamsPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={team.lead.avatar || "/placeholder.svg"} alt={team.lead.name} />
+                            <AvatarImage
+                              src={team.lead.avatar || "/placeholder.svg"}
+                              alt={team.lead.name}
+                            />
                             <AvatarFallback className="bg-[#003A70] text-white">
                               {team.lead.name
                                 .split(" ")
@@ -436,8 +541,12 @@ export default function TeamsPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{team.lead.name}</div>
-                            <div className="text-xs text-gray-500">{team.lead.position}</div>
+                            <div className="font-medium text-sm">
+                              {team.lead.name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {team.lead.position}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -448,7 +557,10 @@ export default function TeamsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-100 text-blue-800 border-blue-300"
+                        >
                           {team.activeReports}
                         </Badge>
                       </TableCell>
@@ -456,28 +568,39 @@ export default function TeamsPage() {
                         <div className="flex items-center gap-2">
                           <Progress
                             value={team.performance}
-                            className="h-2 w-24"
-                            indicatorClassName={getPerformanceColor(team.performance)}
+                            className={`h-2 w-24 [&>div]:${getPerformanceColor(
+                              team.performance
+                            )}`}
                           />
-                          <span className="text-sm font-medium">{team.performance}%</span>
+                          <span className="text-sm font-medium">
+                            {team.performance}%
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/authority/teams/${team.id}`}>View Details</Link>
+                              <Link href={`/authority/teams/${team.id}`}>
+                                View Details
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>Edit Team</DropdownMenuItem>
                             <DropdownMenuItem>Manage Members</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View Assigned Reports</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              View Assigned Reports
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -494,13 +617,27 @@ export default function TeamsPage() {
               <Table>
                 <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableHead className="font-medium text-gray-500">Team Name</TableHead>
-                    <TableHead className="font-medium text-gray-500">Department</TableHead>
-                    <TableHead className="font-medium text-gray-500">Team Lead</TableHead>
-                    <TableHead className="font-medium text-gray-500">Members</TableHead>
-                    <TableHead className="font-medium text-gray-500">Active Reports</TableHead>
-                    <TableHead className="font-medium text-gray-500">Performance</TableHead>
-                    <TableHead className="text-right font-medium text-gray-500">Actions</TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Name
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Department
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Lead
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Members
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Active Reports
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Performance
+                    </TableHead>
+                    <TableHead className="text-right font-medium text-gray-500">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -511,7 +648,10 @@ export default function TeamsPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={team.lead.avatar || "/placeholder.svg"} alt={team.lead.name} />
+                            <AvatarImage
+                              src={team.lead.avatar || "/placeholder.svg"}
+                              alt={team.lead.name}
+                            />
                             <AvatarFallback className="bg-[#003A70] text-white">
                               {team.lead.name
                                 .split(" ")
@@ -520,8 +660,12 @@ export default function TeamsPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{team.lead.name}</div>
-                            <div className="text-xs text-gray-500">{team.lead.position}</div>
+                            <div className="font-medium text-sm">
+                              {team.lead.name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {team.lead.position}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -532,7 +676,10 @@ export default function TeamsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-100 text-blue-800 border-blue-300"
+                        >
                           {team.activeReports}
                         </Badge>
                       </TableCell>
@@ -540,28 +687,39 @@ export default function TeamsPage() {
                         <div className="flex items-center gap-2">
                           <Progress
                             value={team.performance}
-                            className="h-2 w-24"
-                            indicatorClassName={getPerformanceColor(team.performance)}
+                            className={`h-2 w-24 [&>div]:${getPerformanceColor(
+                              team.performance
+                            )}`}
                           />
-                          <span className="text-sm font-medium">{team.performance}%</span>
+                          <span className="text-sm font-medium">
+                            {team.performance}%
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/authority/teams/${team.id}`}>View Details</Link>
+                              <Link href={`/authority/teams/${team.id}`}>
+                                View Details
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>Edit Team</DropdownMenuItem>
                             <DropdownMenuItem>Manage Members</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View Assigned Reports</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              View Assigned Reports
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -578,13 +736,27 @@ export default function TeamsPage() {
               <Table>
                 <TableHeader className="bg-gray-50">
                   <TableRow>
-                    <TableHead className="font-medium text-gray-500">Team Name</TableHead>
-                    <TableHead className="font-medium text-gray-500">Department</TableHead>
-                    <TableHead className="font-medium text-gray-500">Team Lead</TableHead>
-                    <TableHead className="font-medium text-gray-500">Members</TableHead>
-                    <TableHead className="font-medium text-gray-500">Active Reports</TableHead>
-                    <TableHead className="font-medium text-gray-500">Performance</TableHead>
-                    <TableHead className="text-right font-medium text-gray-500">Actions</TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Name
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Department
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Team Lead
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Members
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Active Reports
+                    </TableHead>
+                    <TableHead className="font-medium text-gray-500">
+                      Performance
+                    </TableHead>
+                    <TableHead className="text-right font-medium text-gray-500">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -595,7 +767,10 @@ export default function TeamsPage() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={team.lead.avatar || "/placeholder.svg"} alt={team.lead.name} />
+                            <AvatarImage
+                              src={team.lead.avatar || "/placeholder.svg"}
+                              alt={team.lead.name}
+                            />
                             <AvatarFallback className="bg-[#003A70] text-white">
                               {team.lead.name
                                 .split(" ")
@@ -604,8 +779,12 @@ export default function TeamsPage() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-medium text-sm">{team.lead.name}</div>
-                            <div className="text-xs text-gray-500">{team.lead.position}</div>
+                            <div className="font-medium text-sm">
+                              {team.lead.name}
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {team.lead.position}
+                            </div>
                           </div>
                         </div>
                       </TableCell>
@@ -616,7 +795,10 @@ export default function TeamsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-300">
+                        <Badge
+                          variant="outline"
+                          className="bg-blue-100 text-blue-800 border-blue-300"
+                        >
                           {team.activeReports}
                         </Badge>
                       </TableCell>
@@ -624,28 +806,39 @@ export default function TeamsPage() {
                         <div className="flex items-center gap-2">
                           <Progress
                             value={team.performance}
-                            className="h-2 w-24"
-                            indicatorClassName={getPerformanceColor(team.performance)}
+                            className={`h-2 w-24 [&>div]:${getPerformanceColor(
+                              team.performance
+                            )}`}
                           />
-                          <span className="text-sm font-medium">{team.performance}%</span>
+                          <span className="text-sm font-medium">
+                            {team.performance}%
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                            >
                               <MoreHorizontal className="h-4 w-4" />
                               <span className="sr-only">Actions</span>
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuItem asChild>
-                              <Link href={`/authority/teams/${team.id}`}>View Details</Link>
+                              <Link href={`/authority/teams/${team.id}`}>
+                                View Details
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>Edit Team</DropdownMenuItem>
                             <DropdownMenuItem>Manage Members</DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem>View Assigned Reports</DropdownMenuItem>
+                            <DropdownMenuItem>
+                              View Assigned Reports
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -661,7 +854,9 @@ export default function TeamsPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="border shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-bold">Team Performance Overview</CardTitle>
+            <CardTitle className="text-sm font-bold">
+              Team Performance Overview
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -681,12 +876,15 @@ export default function TeamsPage() {
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium">{team.name}</p>
-                        <span className="text-sm font-medium">{team.performance}%</span>
+                        <span className="text-sm font-medium">
+                          {team.performance}%
+                        </span>
                       </div>
                       <Progress
                         value={team.performance}
-                        className="h-2"
-                        indicatorClassName={getPerformanceColor(team.performance)}
+                        className={`h-2 [&>div]:${getPerformanceColor(
+                          team.performance
+                        )}`}
                       />
                     </div>
                   </div>
@@ -697,7 +895,9 @@ export default function TeamsPage() {
 
         <Card className="border shadow-sm">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-bold">Team Workload Distribution</CardTitle>
+            <CardTitle className="text-sm font-bold">
+              Team Workload Distribution
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -717,12 +917,13 @@ export default function TeamsPage() {
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-medium">{team.name}</p>
-                        <span className="text-sm font-medium">{team.activeReports} active</span>
+                        <span className="text-sm font-medium">
+                          {team.activeReports} active
+                        </span>
                       </div>
                       <Progress
                         value={(team.activeReports / 15) * 100}
-                        className="h-2"
-                        indicatorClassName="bg-blue-500"
+                        className="h-2 [&>div]:bg-blue-500"
                       />
                     </div>
                   </div>
@@ -735,12 +936,22 @@ export default function TeamsPage() {
       <div className="bg-[#E6EEF4] border rounded-md p-4">
         <h2 className="font-bold text-[#003A70] mb-2">Team Management Notes</h2>
         <ul className="text-xs space-y-1 text-gray-700">
-          <li>• Teams are evaluated based on resolution time, quality of work, and citizen feedback.</li>
-          <li>• Performance metrics are updated weekly based on completed reports.</li>
-          <li>• Team leads are responsible for assigning tasks to team members.</li>
-          <li>• For team-related inquiries, please contact the Department Administration Office.</li>
+          <li>
+            • Teams are evaluated based on resolution time, quality of work, and
+            citizen feedback.
+          </li>
+          <li>
+            • Performance metrics are updated weekly based on completed reports.
+          </li>
+          <li>
+            • Team leads are responsible for assigning tasks to team members.
+          </li>
+          <li>
+            • For team-related inquiries, please contact the Department
+            Administration Office.
+          </li>
         </ul>
       </div>
     </div>
-  )
+  );
 }
